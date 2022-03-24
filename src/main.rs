@@ -9,7 +9,10 @@ use tui::{
     widgets::{Paragraph, Wrap},
 };
 
+/// TODO: Move code to lib folder
+/// runs rum using
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // TODO: move to own function
     let mut args = std::env::args().peekable();
     // skip first, we dont care about it
     args.next();
@@ -19,12 +22,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         files.push(arg.to_string())
     }
 
+    // TODO: move to own function called setup
     crossterm::terminal::enable_raw_mode()?;
+
+    // TODO: put in lib function
     let mut stdout = std::io::stdout();
-
     let mut terminal = setup_terminal(&mut stdout)?;
-
-    let app = setup_app(&mut terminal, &files);
+    let rum = run_rum(&mut terminal, &files);
 
     crossterm::terminal::disable_raw_mode()?;
     crossterm::execute!(
@@ -35,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     terminal.show_cursor()?;
 
-    if let Err(err) = app {
+    if let Err(err) = rum {
         println!("{:?}", err)
     }
 
@@ -63,7 +67,12 @@ fn setup_terminal(
     Ok(terminal)
 }
 
-fn setup_app<B: tui::backend::Backend>(
+/// Runs the application in a loop
+/// and outputs everything to the `terminal` argument
+///
+/// terminal: tui::Terminal - for now, should be updated to rum_view package
+/// files: &Vec<String> -
+fn run_rum<B: tui::backend::Backend>(
     terminal: &mut tui::Terminal<B>,
     files: &Vec<String>,
 ) -> std::io::Result<()> {
@@ -132,5 +141,13 @@ fn setup_app<B: tui::backend::Backend>(
                 panic!("Panic with c.handle_event: {}", reason);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn should_setup_terminal() {
+        std::io::Stdout
     }
 }
